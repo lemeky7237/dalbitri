@@ -949,13 +949,13 @@ function goHome(on){SFX.tap();$('home').classList.toggle('off',!on);if(!on)setTi
 /* ---------- 룰렛 ---------- */
 const ROU={
   bbd:{img:'m_bbd',face:'f_bbd',name:'빵떡 룰렛',emo:'🦛',a:'#ffb3c6',b:'#e0577f',c1:'#ffc6d5',c2:'#fff1f5',rc:'#f07397',rc2:'#c23d64',
-    seg:[{k:'e',n:5,w:35},{k:'e',n:30,w:4},{k:'e',n:10,w:25},{k:'e',n:100,w:.5},{k:'e',n:15,w:15},{k:'c',n:20,w:8},{k:'e',n:20,w:10},{k:'e',n:50,w:2.5}]},
+    seg:[{k:'e',n:20,w:35},{k:'e',n:100,w:4},{k:'e',n:30,w:25},{k:'e',n:400,w:.5},{k:'e',n:40,w:15},{k:'c',n:20,w:8},{k:'e',n:60,w:10},{k:'e',n:200,w:2.5}]},
   bbg:{img:'m_bbg',face:'f_bbg',name:'빵군 룰렛',emo:'🐧',a:'#a9d4ff',b:'#3f7fd0',c1:'#c2e1ff',c2:'#eef7ff',rc:'#5a9ae6',rc2:'#2c5fa8',
-    seg:[{k:'c',n:10,w:35},{k:'c',n:100,w:4},{k:'c',n:20,w:25},{k:'c',n:500,w:.5},{k:'c',n:30,w:15},{k:'e',n:10,w:8},{k:'c',n:50,w:10},{k:'c',n:200,w:2.5}]},
+    seg:[{k:'c',n:10,w:35},{k:'c',n:100,w:4},{k:'c',n:20,w:25},{k:'c',n:500,w:.5},{k:'c',n:30,w:15},{k:'e',n:20,w:8},{k:'c',n:50,w:10},{k:'c',n:200,w:2.5}]},
   ang:{img:'m_ang',face:'f_ang',name:'앙이 룰렛',emo:'🐶',a:'#ffd48a',b:'#d9861c',c1:'#ffd99c',c2:'#fff6e2',rc:'#f3a63a',rc2:'#b8680e',
-    seg:[{k:'i',n:1,w:35},{k:'i',n:4,w:4},{k:'i',n:2,w:25},{k:'i',n:6,w:.5},{k:'i',n:3,w:15},{k:'e',n:10,w:8},{k:'g',n:2,w:10},{k:'i',n:5,w:2.5}]},
+    seg:[{k:'i',n:1,w:35},{k:'i',n:4,w:4},{k:'i',n:2,w:25},{k:'i',n:6,w:.5},{k:'i',n:3,w:15},{k:'e',n:20,w:8},{k:'g',n:2,w:10},{k:'i',n:5,w:2.5}]},
   mik:{name:'미끼 룰렛',emo:'🍀',a:'#d5bfff',b:'#7a46c8',c1:'#dcc8ff',c2:'#f8f2ff',rc:'#9a66e0',rc2:'#5d32a2',
-    seg:[{k:'e',n:1,w:15},{k:'c',n:1,w:15},{k:'e',n:2,w:14},{k:'j',n:0,w:1},{k:'c',n:2,w:14},{k:'e',n:3,w:14},{k:'c',n:3,w:14},{k:'c',n:5,w:13}]}
+    seg:[{k:'e',n:20,w:15},{k:'c',n:1,w:15},{k:'e',n:25,w:14},{k:'j',n:0,w:1},{k:'c',n:2,w:14},{k:'e',n:30,w:14},{k:'c',n:3,w:14},{k:'c',n:5,w:13}]}
 };
 const RKEYS=['bbd','bbg','ang','mik'],RCD=10000;
 S.rt=S.rt||{};
@@ -985,7 +985,7 @@ function openRoulette(k){bgmDuck(true);SFX.open();
   const R=$('rWrap').clientWidth*.425;$('rWrap').style.setProperty('--R',R+'px');
   const rim=$('rim');if(!rim.children.length){for(let i=0;i<16;i++){const b=document.createElement('span');b.className='bulb';const t=i/16*Math.PI*2;b.style.left=50+46.3*Math.sin(t)+'%';b.style.top=50-46.3*Math.cos(t)+'%';rim.appendChild(b)}}
   const tot=r.seg.reduce((x,s)=>x+s.w,0);
-  $('rTable').innerHTML=r.seg.map(s=>`<span>${s.k==='e'?'⚡ 에너지 '+s.n:s.k==='c'?'🪙 코인 '+s.n:s.k==='i'?'재료 '+s.n+'단계':s.k==='g'?'🎁 재료 2개':'💎 대박 (⚡100 · 🪙500 · ⭐3)'}</span><b>${(s.w/tot*100).toFixed(s.w<1?1:0)}%</b>`).join('');
+  $('rTable').innerHTML=r.seg.map(s=>`<span>${s.k==='e'?'⚡ 에너지 '+s.n:s.k==='c'?'🪙 코인 '+s.n:s.k==='i'?'재료 '+s.n+'단계':s.k==='g'?'🎁 재료 2개':'💎 대박 (⚡400 · 🪙500 · ⭐3)'}</span><b>${(s.w/tot*100).toFixed(s.w<1?1:0)}%</b>`).join('');
   $('rTable').hidden=true;bulbs('idle');rouUI();
 }
 function rouUI(){if(!curR||rBusy)return;const l=rLeft(curR);$('rSpin').disabled=l>0;$('rSub').textContent=l?`${fmt(l)} 뒤에 다시 무료`:'무료로 돌릴 수 있어!'}
@@ -1025,14 +1025,14 @@ function rouWin(k){
     $('rWinT').textContent=jack?'대박!!':'획득!';
     let icon=segIcon(s),amt=segAmt(s);lastWinItems=null;
     if(s.k==='i'||s.k==='g'){const c=pick(S.gens),lv=Math.min(MAXL(c),s.k==='g'?2:s.n),cnt=s.k==='g'?2:1;lastWinItems={c,l:lv,cnt};icon=Array(cnt).fill(`<img src="${CH[c].img(lv)}" alt="">`).join('');amt=CH[c].name[lv-1]+(cnt>1?' x2':'')}
-    if(s.k==='e')amt='에너지 +'+s.n;if(s.k==='c')amt='코인 +'+s.n;if(jack){icon=icoImg(IMG.en3,'')+icoImg(IMG.coin3,'')+'⭐';amt='⚡100 · 🪙500 · ⭐3'}
+    if(s.k==='e')amt='에너지 +'+s.n;if(s.k==='c')amt='코인 +'+s.n;if(jack){icon=icoImg(IMG.en3,'')+icoImg(IMG.coin3,'')+'⭐';amt='⚡400 · 🪙500 · ⭐3'}
     $('rWinI').innerHTML=icon;$('rWinA').textContent=amt;$('rGet').onclick=()=>claim(s);
   },650);
 }
 function claim(s){
   $('rWin').hidden=true;bulbs('idle');rBusy=false;rouUI();SFX.coin();
   const sp=$('rSpin').getBoundingClientRect(),x=sp.left+sp.width/2,y=sp.top;
-  if(s.k==='e'||s.k==='j'){const n=s.k==='j'?100:s.n;flyTo('⚡',x,y,'pE',()=>{S.energy+=n;hud();bump('pE');save()})}
+  if(s.k==='e'||s.k==='j'){const n=s.k==='j'?400:s.n;flyTo('⚡',x,y,'pE',()=>{S.energy+=n;hud();bump('pE');save()})}
   if(s.k==='c'||s.k==='j'){const n=s.k==='j'?500:s.n;setTimeout(()=>flyTo('🪙',x,y,'pC',()=>{S.coins+=n;hud();bump('pC');save()}),120)}
   if(s.k==='j')setTimeout(()=>flyTo('⭐',x,y,'pS',()=>{S.stars+=3;hud();bump('pS');drawProg();save()}),240);
   if(lastWinItems){const {c,l,cnt}=lastWinItems;let placed=0;for(let q=0;q<cnt;q++){const j=nearestEmpty(0);if(j<0){S.coins+=l*15;continue}S.cells[j].it={t:'i',c,l};made(S.cells[j].it);drawCell(j,true);placed++}
