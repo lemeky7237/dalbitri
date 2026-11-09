@@ -545,7 +545,12 @@ const rnd=n=>Math.floor(Math.random()*n), pick=a=>a[rnd(a.length)];
 
 /* ---------- 소리 ---------- */
 let AC=null;
-function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state!=='running'&&AC.state!=='closed')AC.resume().catch(()=>{});return AC}
+let auUnlocked=false;
+function auUnlock(){const a=ac();if(!a)return;
+  if(!auUnlocked){try{const b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0)}catch(e){}}
+  if(a.state==='running')auUnlocked=true;loadSnd();bgmStart()}
 function tone(f,d,type,vol,when,slide){const a=ac();if(!a||S.mute)return;const t=a.currentTime+(when||0),o=a.createOscillator(),g=a.createGain();
   o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.12,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.03)}
@@ -594,8 +599,8 @@ async function bgmStart(){
 function bgmStop(){if(!bgmSrc)return;const a=ac(),g=bgmGain,s=bgmSrc;bgmSrc=null;g.gain.cancelScheduledValues(a.currentTime);g.gain.setValueAtTime(g.gain.value,a.currentTime);g.gain.linearRampToValueAtTime(0,a.currentTime+.6);setTimeout(()=>{try{s.stop()}catch(e){}},700)}
 let duck=false;
 function bgmDuck(on){duck=on;if(bgmGain&&bgmSrc){const a=ac();bgmGain.gain.cancelScheduledValues(a.currentTime);bgmGain.gain.setTargetAtTime(bgmVol()*(on?.45:1),a.currentTime,.25)}}
-document.addEventListener('pointerdown',()=>{ac();loadSnd();bgmStart()});
-document.addEventListener('visibilitychange',()=>{if(!AC)return;if(document.hidden)AC.suspend();else AC.resume()});
+['pointerdown','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,auUnlock,{capture:true,passive:true}));
+document.addEventListener('visibilitychange',()=>{if(!AC)return;if(document.hidden)AC.suspend();else AC.resume().catch(()=>{})});
 
 /* ---------- 상태 ---------- */
 let S;
